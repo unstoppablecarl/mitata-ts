@@ -126,6 +126,7 @@ interface trial {
   baseline: boolean;
   args: Record<string, any[]>;
   kind: 'args' | 'static' | 'multi-args';
+  group: number
 
   style: {
     compact: boolean;
