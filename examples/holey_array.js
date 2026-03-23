@@ -1,4 +1,4 @@
-import { run, bench, summary, do_not_optimize } from 'mitata';
+import { run, bench, summary, do_not_optimize } from '../dist/main.js';
 
 // https://v8.dev/blog/elements-kinds
 

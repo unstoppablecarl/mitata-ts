@@ -1,5 +1,5 @@
-import { now, print } from '../src/lib.mjs';
-import { run, bench, boxplot, barplot, lineplot, measure } from '../src/main.mjs';
+import { now, print } from '../dist/lib.js';
+import { run, bench, boxplot, barplot, lineplot, measure } from '../dist/main.js';
 
 boxplot(() => {
 // barplot(() => {

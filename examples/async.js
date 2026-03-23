@@ -1,4 +1,4 @@
-import { run, bench, group, compact } from 'mitata';
+import { run, bench, group, compact } from '../dist/main.js';
 
 async function sleep(ms) {
   return await new Promise(resolve => setTimeout(resolve, ms));

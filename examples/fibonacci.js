@@ -1,4 +1,4 @@
-import { run, bench, summary } from '..';
+import { run, bench, summary } from '../dist/main.js';
 
 function fibonacci(n) {
   if (n <= 1) return n;

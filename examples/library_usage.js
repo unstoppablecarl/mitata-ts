@@ -1,4 +1,4 @@
-import { B, measure } from 'mitata';
+import { B, measure } from '../dist/main.js';
 
 // Example function to measure
 function complexCalculation(n) {

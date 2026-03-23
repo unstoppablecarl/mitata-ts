@@ -1,4 +1,4 @@
-import { run, bench, summary, lineplot } from 'mitata';
+import { run, bench, summary, lineplot } from '../dist/main.js';
 
 function gen(len) {
   const u8 = new Uint8Array(len);

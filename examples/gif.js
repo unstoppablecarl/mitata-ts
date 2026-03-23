@@ -1,11 +1,11 @@
 import { openSync, closeSync, readFileSync } from 'fs';
-import { run, bench, boxplot, summary, compact, barplot, group, lineplot, do_not_optimize } from '../src/main.mjs';
+import { run, bench, boxplot, summary, compact, barplot, group, lineplot, do_not_optimize } from '../dist/main.js';
 
 barplot(() => {
   summary(() => {
     bench('Date.now()', () => do_not_optimize(Date.now()));
     bench('performance.now()', () => do_not_optimize(performance.now()));
-    bench('Bun.nanoseconds()', () => do_not_optimize(Bun.nanoseconds()));
+    // bench('Bun.nanoseconds()', () => do_not_optimize(Bun.nanoseconds()));
   });
 });
 
@@ -29,11 +29,11 @@ group('deleting n keys from object', () => {
 });
 
 boxplot(() => {
-  bench('Bun.mmap', function* () {
-    const fd = Bun.mmap('examples/gif.js');
-
-    yield () => fd.slice(0);
-  });
+  // bench('Bun.mmap', function* () {
+  //   const fd = Bun.mmap('examples/gif.js');
+  //
+  //   yield () => fd.slice(0);
+  // });
 
   bench('fs.readFileSync', function* () {
     const fd = openSync('examples/gif.js');
@@ -67,4 +67,4 @@ group('optimized out examples', () => {
   bench('empty function', () => { });
 });
 
-await run();
+await run({debug: true, throw: true});
