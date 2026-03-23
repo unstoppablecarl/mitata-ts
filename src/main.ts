@@ -8,7 +8,7 @@ import type {
   Color,
   ColorBounds,
   Context,
-  GCType, Gen, Result,
+  GCType, Gen, k_iter, k_state, Result,
   RunOptions, State,
   Stats,
   Trial,
@@ -227,7 +227,13 @@ export function summary(f: () => any) { return _c(f, 's'); }
 export function lineplot(f: () => any) { return _c(f, 'l'); }
 export function group(name: string, f: () => any) { if (typeof name === 'function') (f = name, name = null); return _c(f, 'g', name); }
 
-export function bench(n: string, fn) {
+export function bench(fn: () => any): B;
+export function bench(gen: (state: k_state) => Gen): B;
+export function bench(iter: (state: k_iter & k_state) => any): B;
+export function bench(name: string, fn: () => any): B;
+export function bench(name: string, gen: (state: k_state) => Gen): B;
+export function bench(name: string, iter: (state: k_iter & k_state) => any): B;
+export function bench(n: any, fn?: any) {
   if (typeof n === 'function') (fn = n, n = fn.name || 'anonymous');
 
   const collection = COLLECTIONS[COLLECTIONS.length - 1];

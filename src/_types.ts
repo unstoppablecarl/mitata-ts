@@ -185,6 +185,10 @@ export type Gen =
 
 export type GenFactory = (ctx: k_statefree) => Gen;
 
+export interface k_state {
+  get(name: string): any;
+}
+
 export interface k_statefree {
   get(name: string): undefined;
 }
