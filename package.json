@@ -2,11 +2,14 @@
   "name": "mitata-ts",
   "type": "module",
   "license": "MIT",
-  "version": "1.0.34",
+  "version": "1.0.0",
+  "packageManager": "pnpm@10.30.0",
   "main": "dist/main.js",
   "types": "dist/main.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "readme.md",
+    "LICENSE"
   ],
   "description": "Mitata with TS️",
   "homepage": "https://github.com/unstoppablecarl/mitata-ts#readme",
@@ -24,7 +27,8 @@
     "library",
     "benchmark",
     "performance",
-    "microbenchmark"
+    "microbenchmark",
+    "typescript"
   ],
   "scripts": {
     "build": "tsc"

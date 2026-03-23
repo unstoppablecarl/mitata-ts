@@ -1,4 +1,6 @@
-## A TS refactor [Mitata](https://github.com/evanwashere/mitata)
+## A TS version of [Mitata](https://github.com/evanwashere/mitata)
+
+![Alt text](images/readme.gif)
 
 ### Install
 
