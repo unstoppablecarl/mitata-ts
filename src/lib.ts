@@ -128,7 +128,7 @@ export const now = (() => {
 
     now(); return () => 1e6 * now();
   } catch { return () => 1e6 * Date.now(); }
-})();
+})() as () => number;
 
 export function kind(fn, _ = false): BenchFnType | undefined {
   if (!(
