@@ -1,4 +1,6 @@
 export { measure, do_not_optimize } from './lib.js';
+export * from './_types'
+
 import type {
   ArgsType,
   BenchFnType,
