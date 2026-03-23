@@ -373,7 +373,7 @@ export async function run(opts = {}) {
   const layout = COLLECTIONS.map(c => ({ name: c.name, types: c.types }));
   const format = 'string' === typeof opts.format ? opts.format : Object.keys(opts.format)[0];
   await formats[format](context, { ...opts, format: opts.format[format] }, benchmarks, layout);
-  return (COLLECTIONS = [{ name: 0, types: [], trials: [] }], { layout, context, benchmarks });
+  return (COLLECTIONS = [{ id: 0, name: null, types: [], trials: [] }], { layout, context, benchmarks });
 }
 
 const formats = {
