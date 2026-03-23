@@ -1,21 +1,55 @@
-/// <reference lib="esnext" />
+type Gen = Generator<() => any, void, undefined> | AsyncGenerator<() => any, void, undefined>;
 type Color = 'red' | 'cyan' | 'white' | 'green' | 'yellow' | 'magenta' | 'blue' | 'black' | 'gray';
 
-export type BenchmarkFn = () => any | Promise<any>;
-export type BenchmarkGen = Generator<BenchmarkFn, void, unknown> | AsyncGenerator<BenchmarkFn, void, unknown>;
+export function measure(fn: () => any, opts?: k_options): Promise<stats>;
+export function measure(gen: (state: k_statefree) => Gen, opts?: k_options): Promise<stats>;
+export function measure(iter: (state: k_iter & k_statefree) => any, opts?: k_options): Promise<stats>;
+export function measure<T extends Record<string, any>>(gen: (state: k_statefull<T>) => Gen, opts: k_args<T>): Promise<stats>;
+export function measure<T extends Record<string, any>>(iter: (state: k_iter & k_statefull<T>) => any, opts: k_args<T>): Promise<stats>;
 
-export interface State<T = Record<string, any>> {
+interface k_state {
+  get(name: string): any;
+}
+
+interface k_statefree {
+  get(name: string): undefined;
+}
+
+interface k_args<T extends Record<string, any>> extends k_options {
+  args: T;
+}
+
+interface k_statefull<T extends Record<string, any>> {
   get<K extends keyof T>(name: K): T[K];
 }
 
-export interface IteratorState {
+interface k_iter {
   [Symbol.iterator](): Iterator<undefined, void, undefined>;
   [Symbol.asyncIterator](): AsyncIterator<undefined, void, undefined>;
 }
 
-export interface BenchmarkOptions {
+interface ctx {
+  now: number,
+  arch: null | string,
+  runtime: null | string,
+  noop: { fn: stats, iter: stats },
+  cpu: { freq: number; name: null | string; },
+}
+
+interface stats {
+  debug: string;
+  ticks: number;
+  samples: number[];
+  counters?: object;
+  kind: 'fn' | 'iter' | 'yield';
+  min: number; max: number; avg: number; p25: number;
+  p50: number; p75: number; p99: number; p999: number;
+  gc?: { avg: number, min: number, max: number, total: number };
+  heap?: { avg: number, min: number, max: number, total: number };
+}
+
+interface k_options {
   now?: () => number;
-  gc?: boolean | (() => void);
   inner_gc?: boolean;
   heap?: () => number;
   concurrency?: number;
@@ -28,37 +62,17 @@ export interface BenchmarkOptions {
   batch_threshold?: number;
   warmup_threshold?: number;
   samples_threshold?: number;
+  gc?: boolean | (() => void);
 }
 
-export interface BenchmarkOptionsWithArgs<T extends Record<string, any>> extends BenchmarkOptions {
-  args: T;
-}
-
-export interface Stats {
-  debug: string;
-  ticks: number;
-  samples: number[];
-  kind: 'fn' | 'iter' | 'yield';
-  min: number; max: number; avg: number;
-  p25: number; p50: number; p75: number;
-  p99: number; p999: number;
-  counters?: Record<string, any>;
-  gc?: { avg: number, min: number, max: number, total: number };
-  heap?: { avg: number, min: number, max: number, total: number };
-}
-
-// Low-level measurement API
-export function measure(fn: BenchmarkFn, opts?: BenchmarkOptions): Promise<Stats>;
-export function measure(gen: (state: State<void>) => BenchmarkGen, opts?: BenchmarkOptions): Promise<Stats>;
-export function measure<T extends Record<string, any>>(gen: (state: State<T>) => BenchmarkGen, opts: BenchmarkOptionsWithArgs<T>): Promise<Stats>;
-
-// High-level API
-export function bench(fn: BenchmarkFn): B;
-export function bench(name: string, fn: BenchmarkFn): B;
-export function bench(gen: (state: State) => BenchmarkGen): B;
-export function bench(name: string, gen: (state: State) => BenchmarkGen): B;
-
+// ---
+export function bench(fn: () => any): B;
 export function do_not_optimize(v: any): void;
+export function bench(name: string, fn: () => any): B;
+export function bench(gen: (state: k_state) => Gen): B;
+export function bench(iter: (state: k_iter & k_state) => any): B;
+export function bench(name: string, gen: (state: k_state) => Gen): B;
+export function bench(name: string, iter: (state: k_iter & k_state) => any): B;
 
 export function group(f: () => any): void;
 export function compact(f: () => any): void;
@@ -67,65 +81,52 @@ export function boxplot(f: () => any): void;
 export function barplot(f: () => any): void;
 export function lineplot(f: () => any): void;
 export function group(name: string, f: () => any): void;
+export function group(f: () => Promise<any>): Promise<void>;
+export function compact(f: () => Promise<any>): Promise<void>;
+export function summary(f: () => Promise<any>): Promise<void>;
+export function boxplot(f: () => Promise<any>): Promise<void>;
+export function barplot(f: () => Promise<any>): Promise<void>;
+export function group(name: string, f: () => Promise<any>): Promise<void>;
 
-type RunFormat = 'json'
-  | 'quiet'
-  | 'mitata'
-  | 'markdown'
-  | { json: { debug?: boolean, samples?: boolean } }
-  | { mitata: { name?: number | 'fixed' | 'longest' } }
-
-type RunOptions = {
+export function run(opts?: {
   throw?: boolean;
   filter?: RegExp;
   colors?: boolean;
-  print?: (s: string) => void;
-  observe?: (t: Trial) => Trial;
+  print?: (s: string) => any;
+  observe?: (t: trial) => trial;
+
   format?:
-    RunFormat
-}
-
-export function run(opts?: RunOptions): Promise<Report>;
-
-export interface Report {
-  layout: Layout[];
-  benchmarks: Trial[];
-  context: {
-    now: number;
-    arch: string | null;
-    runtime: string | null;
-    cpu: { freq: number; name: string | null };
-  };
-}
-
-interface Layout {
-  id: number;
-  name: string | null;
-  types: string[];
-}
+    'json'
+    | 'quiet'
+    | 'mitata'
+    | 'markdown'
+    | { json: { debug?: boolean, samples?: boolean } }
+    | { mitata: { name?: number | 'fixed' | 'longest' } }
+}): Promise<{ context: ctx, benchmarks: trial[] }>;
 
 export const flags: {
   compact: number;
   baseline: number;
-}
+};
 
 type Run = ({
-  stats: Stats;
+  stats: stats;
   error: undefined;
 } | {
   stats: undefined;
-  error: Error | unknown;
+  error: Error | { message: string; stack: string; } | unknown;
 }) & {
   name: string;
   args: Record<string, any>;
 }
 
-interface Trial {
+interface trial {
   runs: Run[];
   alias: string;
   baseline: boolean;
   args: Record<string, any[]>;
   kind: 'args' | 'static' | 'multi-args';
+
   style: {
     compact: boolean;
     highlight: false | string;
@@ -133,22 +134,19 @@ interface Trial {
 }
 
 export class B {
-  // Constructors in declaration files can be overloaded
-  constructor(name: string, fn: BenchmarkFn);
-  constructor(name: string, gen: (state: State) => BenchmarkGen);
+  constructor(name: string, fn: () => any);
+  constructor(name: string, gen: (state: k_state) => Gen);
+  constructor(name: string, iter: (state: k_iter & k_state) => any);
 
+  args(values: any[]): this;
   compact(bool?: boolean): this;
   baseline(bool?: boolean): this;
   highlight(color?: Color): this;
-  gc(gc?: 'once' | 'inner' | boolean): this;
-  name(name: string, highlight?: Color): this;
-
-  run(thrw?: boolean): Promise<Trial>;
-
-  // Arguments handling
-  args(values: any[]): this;
+  run(thrw?: boolean): Promise<trial>;
   args(map: Record<string, any[]>): this;
   args(name: string, values: any[]): this;
+  gc(gc?: 'once' | 'inner' | boolean): this;
+  name(name: string, highlight?: Color): this;
   range(name: string, s: number, e: number, multiplier?: number): this;
   dense_range(name: string, s: number, e: number, accumulator?: number): this;
 }

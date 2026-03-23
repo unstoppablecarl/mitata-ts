@@ -1,5 +1,5 @@
-export { measure, do_not_optimize } from '../src/lib.ts';
-import { kind, measure, print as grint } from '../src/lib.ts';
+export { measure, do_not_optimize } from './lib.mjs';
+import { kind, measure, print as grint } from './lib.mjs';
 
 let FLAGS = 0;
 let $counters = null;
