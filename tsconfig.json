@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "strict": false,
+    "skipLibCheck": true,
+    "declaration": true,
+    "outDir": "dist",
+    "types": ["bun-types", "deno-types"],
+  },
+  "include": ["src"]
+}

@@ -1,20 +1,10 @@
-<h1 align=center>mitata</h1>
-<div align=center>benchmark tooling that loves you ❤️</div>
-<br />
-
-<div align="center">
-  <img width=68% src="https://raw.githubusercontent.com/evanwashere/mitata/master/.github/readme.gif"></img>
-</div>
-
-<br />
+## A TS refactor [Mitata](https://github.com/evanwashere/mitata)
 
 ### Install
 
-`bun add mitata`
+`bun add mitata-ts`
 
-`npm install mitata`
-
-try mitata in browser with ai assistant at [https://bolt.new/~/mitata](https://bolt.new/~/mitata)
+`npm install mitata-ts`
 
 ## Recommendations
 
@@ -55,7 +45,7 @@ boxplot(() => {
 
 await run();
 ```
-  
+
 </td>
 <td>
 
@@ -84,9 +74,6 @@ int main() {
 </tr>
 </table>
 
-
-
-
 ## configure your experience
 
 ```js
@@ -98,12 +85,14 @@ await run({ throw: true }); // will immediately throw instead of handling error 
 await run({ format: { mitata: { name: 'fixed' } } }); // benchmarks name column is fixed length
 
 // c++
-auto stats = runner.run({ .colors = true, .format = "json", .filter = std::regex(".*") });
+auto
+stats = runner.run({ .colors = true, .format = "json", .filter = std::regex(".*") });
 ```
 
 ## garbage collection
 
-By default, on runtimes with exposed manual gc (like bun or node with `--expose-gc`), mitata runs garbage collection once after each benchmark warmup.
+By default, on runtimes with exposed manual gc (like bun or node with `--expose-gc`), mitata runs garbage collection
+once after each benchmark warmup.
 
 This behavior can be customized using `gc(mode)` method on benchmarks:
 
@@ -120,22 +109,56 @@ bench('lots of allocations', () => {
 
 ### gc impact and memory usage
 
-For runtimes that provide manual garbage collection or offer access to javscript vm heap usage metrics, additional row will be shown with garbage collection timings or/and estimated heap usage.
+For runtimes that provide manual garbage collection or offer access to javscript vm heap usage metrics, additional row
+will be shown with garbage collection timings or/and estimated heap usage.
 
 ```js
-------------------------------------------- -------------------------------
-new Array(512)               509.42 ns/iter 536.53 ns  ▅▃█      ▂          
-                    (449.52 ns … 632.54 ns) 609.34 ns  ███   ▃▅▆█▇         
-                    (  0.00  b …  24.00 kb)   1.61 kb ▆████▅▄██████▅▅▅█▅▄▂▂
+--------------------------------------------------------------------------
+  new Array(512)
+509.42
+ns / iter
+536.53
+ns  ▅▃█      ▂          
+                    (449.52
+ns … 632.54
+ns
+)
+609.34
+ns  ███   ▃▅▆█▇         
+                    (0.00
+b …  24.00
+kb
+)
+1.61
+kb ▆████▅▄██████▅▅▅█▅▄▂▂
 
-Array.from(512)                1.29 µs/iter   1.30 µs  ▂▆█                 
-                        (1.27 µs … 1.48 µs)   1.40 µs ▂███▇▆▃▃▂▁▁▂▁▁▁▁▁▁▁▁▁
-                  gc(457.25 µs … 760.54 µs) 512.32  b (  0.00  b… 84.00 kb)
+Array.from(512)
+1.29
+µs / iter
+1.30
+µs  ▂▆█                 
+                        (1.27
+µs … 1.48
+µs
+)
+1.40
+µs ▂███▇▆▃▃▂▁▁▂▁▁▁▁▁▁▁▁▁
+                  gc(457.25
+µs … 760.54
+µs
+)
+512.32
+b(0.00
+b… 84.00
+kb
+)
 ```
 
 ## universal compatibility
 
-Out of box mitata can detect engine/runtime it's running on and fall back to using [alternative](https://github.com/evanwashere/mitata/blob/master/src/lib.mjs#L51) non-standard I/O functions. If your engine or runtime is missing support, open an issue or pr requesting for support.
+Out of box mitata can detect engine/runtime it's running on and fall back to
+using [alternative](https://github.com/evanwashere/mitata/blob/master/src/lib.mjs#L51) non-standard I/O functions. If
+your engine or runtime is missing support, open an issue or pr requesting for support.
 
 ### how to use mitata with engine CLIs like d8, jsc, graaljs, spidermonkey
 
@@ -151,8 +174,8 @@ $ /System/Library/Frameworks/JavaScriptCore.framework/Versions/Current/Helpers/j
 ```js
 // bench.mjs
 
-import { print } from './src/lib.mjs';
-import { run, bench } from './src/main.mjs'; // git clone
+import { print } from './lib.ts';
+import { run, bench } from './main.mjs'; // git clone
 import { run, bench } from './node_modules/mitata/src/main.mjs'; // npm install
 
 print('hello world'); // works on every engine
@@ -160,7 +183,9 @@ print('hello world'); // works on every engine
 
 ## adding arguments and parameters to your benchmarks has never been so easy
 
-With other benchmarking libraries, often it's quite hard to easily make benchmarks that go over a range or run the same function with different arguments without writing spaghetti code, but now with mitata converting your benchmark to use arguments is just a function call away.
+With other benchmarking libraries, often it's quite hard to easily make benchmarks that go over a range or run the same
+function with different arguments without writing spaghetti code, but now with mitata converting your benchmark to use
+arguments is just a function call away.
 
 ```js
 import { bench } from 'mitata';
@@ -171,15 +196,16 @@ bench(function* look_mom_no_spaghetti(state) {
   yield () => new Array(len * len2);
 })
 
-.args('len', [1, 2, 3])
-.range('len', 1, 1024) // 1, 8, 64, 512...
-.dense_range('len', 1, 100) // 1, 2, 3 ... 99, 100
-.args({ len: [1, 2, 3], len2: ['4', '5', '6'] }) // every possible combination
+  .args('len', [1, 2, 3])
+  .range('len', 1, 1024) // 1, 8, 64, 512...
+  .dense_range('len', 1, 100) // 1, 2, 3 ... 99, 100
+  .args({ len: [1, 2, 3], len2: ['4', '5', '6'] }) // every possible combination
 ```
 
 ### computed parameters
 
-For cases where you need unique copy of value for each iteration, mitata supports creating computed parameters that do not count towards benchmark results *(note: there is no guarantee of recompute time, order, or call count)*:
+For cases where you need unique copy of value for each iteration, mitata supports creating computed parameters that do
+not count towards benchmark results *(note: there is no guarantee of recompute time, order, or call count)*:
 
 ```js
 bench('deleting $keys from object', function* (state) {
@@ -203,6 +229,7 @@ bench('deleting $keys from object', function* (state) {
 ### concurrency
 
 `concurrency` option enables transparent concurrent execution of asynchronous benchmark, providing insights into:
+
 - scalability of async functions
 - potential bottlenecks in parallel code
 - performance under different levels of concurrency
@@ -236,10 +263,12 @@ bench('sleepAsync(1000) x 5', function* () {
 supported on: `macos (apple silicon) | linux (amd64, aarch64)`
 
 linux:
+
 - `/proc/sys/kernel/perf_event_paranoid` has to be set to `2` or lower
 - on some vm systems pmu is disabled by hypervisor (usually when cpu core is shared across vms)
 
 macos:
+
 - [Apple Silicon CPU optimization guide/handbook](https://developer.apple.com/documentation/apple-silicon/cpu-optimization-guide)
 - Xcode must be installed for complete cpu counters support
 - Instruments.app (CPU Counters) has to be closed during benchmarking
@@ -260,10 +289,10 @@ new URL(google.com)          246.40 ns/iter 245.10 ns       █▃
          856.49 cycles   3.53k instructions  28.65% retired LD/ST (  1.01k)
 ```
 
-
 ## helpful warnings
 
-For those who love doing micro-benchmarks, mitata can automatically detect and inform you about optimization passes like dead code elimination without requiring any special engine flags.
+For those who love doing micro-benchmarks, mitata can automatically detect and inform you about optimization passes like
+dead code elimination without requiring any special engine flags.
 
 ```rust
 -------------------------------------- -------------------------------
@@ -277,7 +306,8 @@ empty function          319.36 ps/iter 325.37 ps          █ ▅          !
 
 ## powerful visualizations right in your terminal
 
-With mitata’s ascii rendering capabilities, now you can easily visualize samples in barplots, boxplots, lineplots, histograms, and get clear summaries without any additional tools or dependencies.
+With mitata’s ascii rendering capabilities, now you can easily visualize samples in barplots, boxplots, lineplots,
+histograms, and get clear summaries without any additional tools or dependencies.
 
 ```js
 import { summary, barplot, boxplot, lineplot } from 'mitata';
@@ -288,8 +318,10 @@ barplot(() => {
 });
 
                         ┌                                            ┐
-                  1 + 1 ┤■ 318.11 ps 
-             Date.now() ┤■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■ 27.69 ns 
+                  1 + 1 ┤■ 318.11
+ps
+Date.now() ┤■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■ 27.69
+ns 
                         └                                            ┘
 
 // scopes can be async
@@ -298,17 +330,25 @@ await boxplot(async () => {
 });
 
                         ┌                                            ┐
-                                        ╷┌─┬─┐                       ╷
-            Bubble Sort                 ├┤ │ ├───────────────────────┤
-                                        ╵└─┴─┘                       ╵
-                        ┬   ╷
-             Quick Sort │───┤
-                        ┴   ╵
-                        ┬
-            Native Sort │
-                        ┴
-                        └                                            ┘
-                        90.88 µs            2.43 ms            4.77 ms
+╷┌─┬─┐                       ╷
+            Bubble
+Sort                 ├┤ │ ├───────────────────────┤
+╵└─┴─┘                       ╵
+┬   ╷
+             Quick
+Sort │───┤
+┴   ╵
+┬
+            Native
+Sort │
+┴
+└                                            ┘
+                        90.88
+µs
+2.43
+ms
+4.77
+ms
 
 // can combine multiple visualizations
 lineplot(() => {
@@ -320,32 +360,38 @@ lineplot(() => {
 });
 
 summary
-  new Array($len)
-   5.42…8.33x faster than Array.from($len)
+new Array($len)
+5.42…8.33
+x
+faster
+than
+Array.from($len)
 
                         ┌                                            ┐
       Array.from($size)                                            ⢠⠊
-       new Array($size)                                          ⢀⠔⠁ 
-                                                                ⡠⠃   
-                                                              ⢀⠎     
-                                                             ⡔⠁      
-                                                           ⡠⠊        
-                                                         ⢀⠜          
-                                                        ⡠⠃           
-                                                       ⡔⠁            
-                                                     ⢀⠎              
-                                                    ⡠⠃               
-                                                  ⢀⠜                 
-                                                 ⢠⠊             ⣀⣀⠤⠤⠒
-                                                ⡰⠁       ⣀⡠⠤⠔⠒⠊⠉     
-                                           ⣀⣀⣀⠤⠜   ⣀⡠⠤⠒⠊⠉            
-                         ⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣔⣒⣒⣊⣉⠭⠤⠤⠤⠤⠤⠒⠊⠉               
-                        └                                            ┘
+       new Array($size)                                          ⢀⠔⠁
+⡠⠃
+⢀⠎
+⡔⠁
+⡠⠊
+⢀⠜
+⡠⠃
+⡔⠁
+⢀⠎
+⡠⠃
+⢀⠜
+⢠⠊             ⣀⣀⠤⠤⠒
+⡰⠁       ⣀⡠⠤⠔⠒⠊⠉
+⣀⣀⣀⠤⠜   ⣀⡠⠤⠒⠊⠉
+⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣔⣒⣒⣊⣉⠭⠤⠤⠤⠤⠤⠒⠊⠉
+└                                            ┘
 ```
 
 ## give your own code power of mitata
 
-In case you don’t need all the fluff that comes with mitata or just need raw results, mitata exports its fundamental building blocks to allow you to easily build your own tooling and wrappers without losing any core benefits of using mitata.
+In case you don’t need all the fluff that comes with mitata or just need raw results, mitata exports its fundamental
+building blocks to allow you to easily build your own tooling and wrappers without losing any core benefits of using
+mitata.
 
 ```cpp
 #include "src/mitata.hpp"
@@ -391,9 +437,15 @@ const trial = await b.run();
 
 ## accuracy down to picoseconds
 
-By leveraging the power of javascript JIT compilation, mitata is able to generate zero-overhead measurement loops that provide picoseconds precision in timing measurements. These loops are so precise that they can even be reused to provide additional features like CPU clock frequency estimation and dead code elimination detection, all while staying inside javascript vm sandbox.
+By leveraging the power of javascript JIT compilation, mitata is able to generate zero-overhead measurement loops that
+provide picoseconds precision in timing measurements. These loops are so precise that they can even be reused to provide
+additional features like CPU clock frequency estimation and dead code elimination detection, all while staying inside
+javascript vm sandbox.
 
-With [computed parameters](#computed-parameters) and [garbage collection tuning](#garbage-collection), you can tap into mitata's code generation capabilities to further refine the accuracy of your benchmarks. Using computed parameters ensures that parameters computation is moved outside the benchmark, thereby preventing the javascript JIT from performing loop invariant code motion optimization.
+With [computed parameters](#computed-parameters) and [garbage collection tuning](#garbage-collection), you can tap into
+mitata's code generation capabilities to further refine the accuracy of your benchmarks. Using computed parameters
+ensures that parameters computation is moved outside the benchmark, thereby preventing the javascript JIT from
+performing loop invariant code motion optimization.
 
 ```rust
 // node --expose-gc --allow-natives-syntax tools/compare.mjs
@@ -485,20 +537,25 @@ a / b x 10,311,999 ops/sec (11 runs sampled) v8-never-optimize=true min..max=(95
 ╚══════════════╧═════════╧═══════════════════╧═══════════╝
 214.37 ns/iter - https://npmjs.com/cronometro
 ```
+
 </details>
 
 ## writing good benchmarks
 
-Creating accurate and meaningful benchmarks requires careful attention to how modern JavaScript engines optimize code. This covers essential concepts and best practices to ensure your benchmarks measure actual performance characteristics rather than optimization artifacts.
+Creating accurate and meaningful benchmarks requires careful attention to how modern JavaScript engines optimize code.
+This covers essential concepts and best practices to ensure your benchmarks measure actual performance characteristics
+rather than optimization artifacts.
 
 ### examples
+
 - [readme gif](/examples/gif.js)
 - [cpu cache line size](/examples/cacheline.js)
 - [holey vs packed arrays](/examples/holey_array.js)
 
 ### dead code elimination
 
-JIT can detect and eliminate code that has no observable effects. To ensure your benchmark code executes as intended, you must create observable side effects.
+JIT can detect and eliminate code that has no observable effects. To ensure your benchmark code executes as intended,
+you must create observable side effects.
 
 ```js
 import { do_not_optimize } from 'mitata';
@@ -518,7 +575,8 @@ bench(function* () {
 
 ### garbage collection pressure
 
-For benchmarks involving significant memory allocations, controlling garbage collection frequency can improve results consistency.
+For benchmarks involving significant memory allocations, controlling garbage collection frequency can improve results
+consistency.
 
 ```js
 // ❌ Bad: unpredictable gc pauses
@@ -534,7 +592,8 @@ bench(() => {
 
 ### loop invariant code motion optimization
 
-JavaScript engines can optimize away repeated computations by hoisting them out of loops or caching results. Use computed parameters to prevent loop invariant code motion optimization.
+JavaScript engines can optimize away repeated computations by hoisting them out of loops or caching results. Use
+computed parameters to prevent loop invariant code motion optimization.
 
 ```js
 bench(function* (ctx) {

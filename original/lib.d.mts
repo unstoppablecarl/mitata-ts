@@ -1,3 +1,5 @@
+/// <reference lib="esnext" />
+
 type Gen = Generator<() => any, void, undefined> | AsyncGenerator<() => any, void, undefined>;
 
 export function gc(): void;
