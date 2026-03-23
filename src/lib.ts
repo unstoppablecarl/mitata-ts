@@ -45,7 +45,7 @@ export async function generator(
   const g = gen(ctx);
   const n = await g.next();
 
-  let value: YieldValue;
+  let value = n.value as YieldValue;
   if (n.value && typeof (n.value as any).then === 'function') {
     value = await n.value;
   }
